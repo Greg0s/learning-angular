@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { FuelType } from '@shared/models';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -6,9 +6,11 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-fuel-type-control',
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div>
-      <h2>Partie 3 - CVA Simple</h2>
+    <div class="fuel-type-control">
+      <h2 class="fuel-type-control__title">Partie 3 - CVA Simple</h2>
       <p>Fuel Type Control Component</p>
       <mat-form-field>
         <mat-label>Type de carburant</mat-label>
@@ -27,14 +29,12 @@ import { CommonModule } from '@angular/common';
   `,
   styles: [
     `
-      div {
+      div.fuel-type-control {
         text-align: center;
-      }
-      h2 {
-        color: blue;
-      }
-      button {
-        padding: 8px 16px;
+
+        &__title {
+          color: blue;
+        }
       }
     `,
   ],
