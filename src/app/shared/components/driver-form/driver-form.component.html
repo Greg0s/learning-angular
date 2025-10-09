@@ -1,0 +1,42 @@
+<form class="driver-form" [formGroup]="driverForm" (ngSubmit)="onSubmit()">
+  <mat-form-field class="driver-form__field">
+    <input matInput formControlName="firstName" placeholder="Prénom" />
+    @if (driverForm.get('firstName')?.hasError('required')) {
+    <mat-error> {{ REQUIRED_ERROR_MSG }} </mat-error>
+    } @else if (driverForm.get('firstName')?.hasError('pattern')) {
+    <mat-error> Uniquement des lettres, tirets et espaces. </mat-error>}
+  </mat-form-field>
+
+  <mat-form-field class="driver-form__field">
+    <input matInput formControlName="lastName" placeholder="Nom" />
+    @if (driverForm.get('lastName')?.hasError('required')) {
+    <mat-error> {{ REQUIRED_ERROR_MSG }} </mat-error>
+    } @else if (driverForm.get('lastName')?.hasError('pattern')) {
+    <mat-error> Uniquement des lettres, tirets et espaces. </mat-error>}
+  </mat-form-field>
+
+  <mat-form-field class="driver-form__field">
+    <input matInput formControlName="licenseNumber" placeholder="N° de permis" />
+    @if (driverForm.get('licenseNumber')?.hasError('required')) {
+    <mat-error> {{ REQUIRED_ERROR_MSG }} </mat-error>
+    } @else if (driverForm.get('licenseNumber')?.hasError('pattern')) {
+    <mat-error> Le N° de permis doit contenir exactement 12 chiffres. </mat-error>}
+  </mat-form-field>
+
+  <button
+    class="driver-form__field"
+    mat-raised-button
+    color="primary"
+    type="submit"
+    [disabled]="driverForm.invalid"
+  >
+    Valider
+  </button>
+</form>
+@if (this.driverForm.valid) {
+<p>
+  First Name: {{ this.driverForm.value.firstName }} <br />
+  Last Name: {{ this.driverForm.value.lastName }} <br />
+  License Number: {{ this.driverForm.value.licenseNumber }}
+</p>
+}

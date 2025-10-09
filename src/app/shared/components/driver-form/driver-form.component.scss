@@ -1,0 +1,15 @@
+.driver-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5em;
+
+  button {
+    margin-top: 2em;
+  }
+}
+
+@media (min-width: 600px) {
+  .driver-form__fields {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
