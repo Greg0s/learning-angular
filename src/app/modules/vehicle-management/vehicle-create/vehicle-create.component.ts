@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -17,8 +17,23 @@ import { FuelTypeControlComponent } from '@shared/components/fuel-type-control/f
 import { DriverFormComponent } from '@shared/components/driver-form/driver-form.component';
 import { VehicleService } from '@core/services/vehicle.service';
 import { Vehicle } from '@shared/models/vehicle.model';
-import { take } from 'rxjs';
+import { FuelType } from '@shared/models';
+import { Driver } from '@shared/models';
+import { Subject, takeUntil } from 'rxjs';
 import { TEXT_CONTENT } from '@shared/data/content.data';
+
+// Typed form group for vehicle creation form
+interface VehicleForm {
+  licensePlate: FormControl<string>;
+  brand: FormControl<string>;
+  model: FormControl<string>;
+  year: FormControl<number | null>;
+  fuelType: FormControl<FuelType | null>;
+  capacity: FormControl<number | null>;
+  isActive: FormControl<boolean>;
+  maintenanceDate: FormControl<Date | null>;
+  driver: FormControl<Driver | null>;
+}
 
 @Component({
   selector: 'app-vehicle-create',
@@ -34,34 +49,50 @@ import { TEXT_CONTENT } from '@shared/data/content.data';
     MatSlideToggleModule,
     FuelTypeControlComponent,
     DriverFormComponent,
-    MatSlideToggleModule,
   ],
   templateUrl: './vehicle-create.component.html',
   styleUrls: ['./vehicle-create.component.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VehicleCreateComponent {
-  readonly REQUIRED_ERROR_MSG = TEXT_CONTENT.error.required; // get required error message
-  vehicleForm: FormGroup;
-  hasDriver = false; // Toggle state to show/hide driver form
+export class VehicleCreateComponent implements OnDestroy {
+  readonly REQUIRED_ERROR_MSG = TEXT_CONTENT.error.required;
+  vehicleForm: FormGroup<VehicleForm>;
+  hasDriver = false;
   hasDriverControl = new FormControl(false);
+  private destroy$ = new Subject<void>();
 
   // Define reactive form with validation for vehicle
   constructor(private fb: FormBuilder, private vehicleService: VehicleService) {
-    this.vehicleForm = this.fb.group({
-      licensePlate: ['', [Validators.required, Validators.pattern(/^[A-Z]{2}-\d{3}-[A-Z]{2}$/i)]],
-      brand: ['', Validators.required],
-      model: ['', Validators.required],
-      year: [
-        null,
-        [Validators.required, Validators.min(1900), Validators.max(new Date().getFullYear() + 1)],
-      ],
-      fuelType: ['', Validators.required],
-      capacity: [null, [Validators.required, Validators.min(1)]],
-      isActive: [true],
-      maintenanceDate: [null],
-      driver: [null],
+    this.vehicleForm = this.fb.group<VehicleForm>({
+      licensePlate: this.fb.control<string>('', {
+        validators: [Validators.required, Validators.pattern(/^[A-Z]{2}-\d{3}-[A-Z]{2}$/i)],
+        nonNullable: true,
+      }),
+      brand: this.fb.control<string>('', {
+        validators: [Validators.required],
+        nonNullable: true,
+      }),
+      model: this.fb.control<string>('', {
+        validators: [Validators.required],
+        nonNullable: true,
+      }),
+      year: this.fb.control<number | null>(null, {
+        validators: [
+          Validators.required,
+          Validators.min(1900),
+          Validators.max(new Date().getFullYear() + 1),
+        ],
+      }),
+      fuelType: this.fb.control<FuelType | null>(null, {
+        validators: [Validators.required],
+      }),
+      capacity: this.fb.control<number | null>(null, {
+        validators: [Validators.required, Validators.min(1)],
+      }),
+      isActive: this.fb.control<boolean>(true, { nonNullable: true }),
+      maintenanceDate: this.fb.control<Date | null>(null),
+      driver: this.fb.control<Driver | null>(null),
     });
   }
 
@@ -75,14 +106,14 @@ export class VehicleCreateComponent {
 
     if (hasDriver) {
       // adding a driver means fields needs to be validated
-      this.f['driver'].setValidators(Validators.required);
+      this.f.driver.setValidators(Validators.required);
     } else {
       // otherwhise, not required
-      this.f['driver'].clearValidators();
-      this.f['driver'].setValue(null);
+      this.f.driver.clearValidators();
+      this.f.driver.setValue(null);
     }
 
-    this.f['driver'].updateValueAndValidity();
+    this.f.driver.updateValueAndValidity();
   }
 
   // generate a random unique ID
@@ -100,12 +131,20 @@ export class VehicleCreateComponent {
 
     const newVehicle: Vehicle = {
       id: this.generateId(),
-      ...this.vehicleForm.value,
+      licensePlate: this.vehicleForm.value.licensePlate!,
+      brand: this.vehicleForm.value.brand!,
+      model: this.vehicleForm.value.model!,
+      year: this.vehicleForm.value.year!,
+      fuelType: this.vehicleForm.value.fuelType!,
+      capacity: this.vehicleForm.value.capacity!,
+      isActive: this.vehicleForm.value.isActive!,
+      maintenanceDate: this.vehicleForm.value.maintenanceDate ?? undefined,
+      driver: this.vehicleForm.value.driver ?? undefined,
     };
 
     this.vehicleService
       .create(newVehicle)
-      .pipe(take(1))
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (v) => {
           console.log('Véhicule créé avec succès:', v);
@@ -115,5 +154,10 @@ export class VehicleCreateComponent {
         },
         error: (err) => console.error('Erreur lors de la création du véhicule:', err),
       });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
