@@ -1,0 +1,18 @@
+<div class="vehicle-list">
+  <!-- Search bar -->
+  <form class="vehicle-list__search-form">
+    <mat-form-field class="vehicle-list__search-form__bar">
+      <mat-label>Recherche</mat-label>
+      <input matInput [formControl]="searchControl" />
+    </mat-form-field>
+  </form>
+
+  <!-- Results table -->
+  <ag-grid-angular
+    [columnDefs]="columnDefs"
+    [rowData]="filteredVehicles$ | async"
+    [domLayout]="'autoHeight'"
+    (gridReady)="onGridReady($event)"
+    (cellValueChanged)="onCellValueChanged($event)"
+  ></ag-grid-angular>
+</div>

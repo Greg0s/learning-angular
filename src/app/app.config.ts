@@ -6,6 +6,9 @@ import {
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+
+ModuleRegistry.registerModules([AllCommunityModule]); // Fix AG Grid warning
 
 export const appConfig: ApplicationConfig = {
   providers: [

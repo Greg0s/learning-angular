@@ -1,0 +1,14 @@
+.vehicle-list {
+  width: 100vw;
+
+  &__search-form {
+    display: flex;
+    justify-content: center;
+
+    margin-top: 1rem;
+
+    &__bar {
+      width: 50%;
+    }
+  }
+}
