@@ -28,10 +28,10 @@ export class VehicleService {
           v.fuelType.toLowerCase().includes(lowerSearch) ||
           v.capacity.toString().includes(lowerSearch) ||
           (v.maintenanceDate ? v.maintenanceDate.toString() : '').includes(lowerSearch) ||
-          // Driver fields
-          (v.driver && v.driver.firstName.toLowerCase().includes(lowerSearch)) ||
-          (v.driver && v.driver.lastName.toLowerCase().includes(lowerSearch)) ||
-          (v.driver && v.driver.licenseNumber.includes(lowerSearch))
+          // Driver fields ("?" as driver is optional)
+          (v.driver?.firstName?.toLowerCase().includes(lowerSearch) ?? false) ||
+          (v.driver?.lastName?.toLowerCase().includes(lowerSearch) ?? false) ||
+          (v.driver?.licenseNumber?.includes(lowerSearch) ?? false)
       );
     })
   );

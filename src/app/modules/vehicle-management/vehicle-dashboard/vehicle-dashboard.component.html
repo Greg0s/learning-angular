@@ -1,0 +1,22 @@
+<div class="vehicle-dashboard">
+  <!-- HEADER -->
+  <header class="vehicle-dashboard__header">
+    <h1>Gestion des véhicules</h1>
+    <button mat-raised-button color="accent" (click)="toggleCreateForm()">
+      <mat-icon>{{ showCreateForm ? 'close' : 'add' }}</mat-icon>
+      {{ showCreateForm ? 'Fermer le Formulaire' : 'Nouveau Véhicule' }}
+    </button>
+  </header>
+
+  <!-- NEW VEHICLE FORM (OPTIONAL DISPLAY) -->
+  @if (showCreateForm) {
+  <mat-card class="vehicle-dashboard__create">
+    <app-vehicle-create></app-vehicle-create>
+  </mat-card>
+  }
+
+  <!-- VEHICLES LIST -->
+  <main class="vehicle-dashboard__content">
+    <app-vehicle-list></app-vehicle-list>
+  </main>
+</div>

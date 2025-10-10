@@ -1,0 +1,106 @@
+<div class="vehicle-create">
+  <h2>Créer un nouveau véhicule</h2>
+  <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
+    <!-- CSS Grid Layout for responsive form organization -->
+    <div class="form-grid">
+      <!-- VEHICLE FORM -->
+
+      <!-- License plate -->
+      <mat-form-field>
+        <mat-label>Plaque d'Immatriculation</mat-label>
+        <input matInput formControlName="licensePlate" placeholder="Ex: AB-123-CD" />
+        @if (f['licensePlate'].hasError('required')) {
+        <mat-error>{{ REQUIRED_ERROR_MSG }}</mat-error>
+        } @if (f['licensePlate'].hasError('pattern')) {
+        <mat-error>Format invalide (Ex: AA-123-BB).</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Brand -->
+      <mat-form-field>
+        <mat-label>Marque</mat-label>
+        <input matInput formControlName="brand" />
+        @if (f['brand'].hasError('required')) {
+        <mat-error>{{ REQUIRED_ERROR_MSG }}</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Model -->
+      <mat-form-field>
+        <mat-label>Modèle</mat-label>
+        <input matInput formControlName="model" />
+        @if (f['model'].hasError('required')) {
+        <mat-error>{{ REQUIRED_ERROR_MSG }}</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Year -->
+      <mat-form-field>
+        <mat-label>Année</mat-label>
+        <input matInput type="number" formControlName="year" />
+        @if (f['year'].hasError('required')) {
+        <mat-error>{{ REQUIRED_ERROR_MSG }}</mat-error>
+        } @if (f['year'].hasError('min') || f['year'].hasError('max')) {
+        <mat-error>Année invalide.</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Capacity -->
+      <mat-form-field>
+        <mat-label>Capacité (Places)</mat-label>
+        <input matInput type="number" formControlName="capacity" />
+        @if (f['capacity'].hasError('required')) {
+        <mat-error>{{ REQUIRED_ERROR_MSG }}</mat-error>
+        } @if (f['capacity'].hasError('min')) {
+        <mat-error>Doit être au moins 1.</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Fuel Type -->
+      <app-fuel-type-control formControlName="fuelType"></app-fuel-type-control>
+      @if (f['fuelType'].touched && f['fuelType'].hasError('required')) {
+      <mat-error>{{ REQUIRED_ERROR_MSG }}</mat-error>
+      }
+
+      <!-- Maintenance date -->
+      <mat-form-field>
+        <mat-label>Date prochaine maintenance</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="maintenanceDate" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Is active? -->
+      <mat-checkbox formControlName="isActive">Véhicule Actif</mat-checkbox>
+    </div>
+
+    <!-- Driver form toggle -->
+    <div class="driver-section">
+      <mat-slide-toggle
+        [formControl]="hasDriverControl"
+        (change)="onDriverToggleChange($event.checked)"
+        color="primary"
+      >
+        Assigner un conducteur
+      </mat-slide-toggle>
+
+      <!-- DRIVER FORM (conditional display)-->
+      @if (hasDriver) {
+      <div class="driver-form-container">
+        <h3 class="driver-title">Conducteur</h3>
+        <app-driver-form formControlName="driver"></app-driver-form>
+      </div>
+      }
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="vehicleForm.invalid"
+      class="submit-btn"
+    >
+      Créer le Véhicule
+    </button>
+  </form>
+</div>

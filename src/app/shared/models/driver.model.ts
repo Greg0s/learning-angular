@@ -1,6 +1,6 @@
 export interface Driver {
   id: number;
-  firstName: string;
-  lastName: string;
-  licenseNumber: string;
+  firstName: string | null;
+  lastName: string | null;
+  licenseNumber: string | null;
 }

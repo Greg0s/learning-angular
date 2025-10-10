@@ -1,14 +1,28 @@
 .vehicle-list {
-  width: 100vw;
-
   &__search-form {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
 
     margin-top: 1rem;
 
     &__bar {
-      width: 50%;
+      margin-bottom: 1rem;
+      max-width: 400px;
+      width: 100%;
+    }
+  }
+
+  .delete-btn {
+    background-color: #e57373;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #f44336;
     }
   }
 }

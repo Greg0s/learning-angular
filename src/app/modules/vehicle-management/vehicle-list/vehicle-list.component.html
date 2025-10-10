@@ -3,7 +3,11 @@
   <form class="vehicle-list__search-form">
     <mat-form-field class="vehicle-list__search-form__bar">
       <mat-label>Recherche</mat-label>
-      <input matInput [formControl]="searchControl" />
+      <input
+        matInput
+        [formControl]="searchControl"
+        placeholder="Immatriculation, Marque, Conducteur..."
+      />
     </mat-form-field>
   </form>
 
